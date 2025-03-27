@@ -12,7 +12,7 @@ from homeassistant.helpers.selector import (
     TextSelectorType,
 )
 
-from .const import DOMAIN
+from .const import DOMAIN, LOGGER
 
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
@@ -48,11 +48,13 @@ class FebosConfigFlow(ConfigFlow, domain=DOMAIN):
     ) -> ConfigFlowResult:
         """Step when user initializes an integration."""
         if user_input is not None:
+            LOGGER.debug("[USER] Creating entry")
             await self.async_set_unique_id(user_input[CONF_USERNAME])
             self._abort_if_unique_id_configured()
             return self.async_create_entry(
                 title=f"EmmeTI Febos - {user_input[CONF_USERNAME]}", data=user_input
             )
+        LOGGER.debug("[USER] Showing form")
         return self.async_show_form(
             step_id="user",
             data_schema=STEP_USER_DATA_SCHEMA,
